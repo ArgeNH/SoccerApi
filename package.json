@@ -1,0 +1,29 @@
+{
+  "name": "api-soccer",
+  "version": "1.0.0",
+  "description": "Soccer API REST",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "NodeJS",
+    "JavaScript",
+    "Express",
+    "MySQL"
+  ],
+  "author": "Arge Niño",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
