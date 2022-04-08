@@ -4,14 +4,17 @@
       - Team
     summary: Create a new team
     description: Create a new team
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: "#/components/schemas/Team"
     consumes:
       - application/json
     produces:
       - application/json
-    parameters:
-      - in: body
-    schema:
-      $ref: "#/components/schemas/Team"
     responses:
       201:
         description: Team created
@@ -19,3 +22,6 @@
         description: Bad request
       500:
         description: Internal server error
+
+---
+
