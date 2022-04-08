@@ -1,13 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const responseTime = require('response-time');
 require('dotenv').config();
 
 const app = express();
 
 app.set('port', process.env.PORT || 5000);
 
-app.use(responseTime());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
