@@ -1,7 +1,9 @@
-const redis = require('redis');
+const Redis = require('ioredis');
 
-const client = redis.createClient({
-    url: 'redis://arge:dn7XM@AmzTGeg#R@redis-17196.c257.us-east-1-3.ec2.cloud.redislabs.com:17196/10985899'
+const redis = new Redis({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD
 });
 
 /*
@@ -12,4 +14,4 @@ createClient({
     dn7XM@AmzTGeg#R
 }); */
 
-module.exports = client;
+module.exports = redis;

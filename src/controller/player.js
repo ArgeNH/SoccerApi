@@ -1,9 +1,9 @@
 const connectionDB = require('../database/dbConnection');
+const redis = require('../database/redis');
 
 const createPlayer = async (req, res) => {
     const { player_id, name, age, team_id, squad_number, position, nationality } = req.body;
 
-    //valid if team exists
     const team = `SELECT * FROM teams WHERE team_id = ${team_id}`;
     await connectionDB.query(team, async (err, result) => {
         if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
@@ -24,25 +24,38 @@ const createPlayer = async (req, res) => {
 }
 
 const getPlayers = async (req, res) => {
+
     const query = `SELECT * FROM players`;
-    await connectionDB.query(query, async (err, result) => {
-        //await errorsHandling(err);
-        return res.status(200).json({
+    await connectionDB.query(query, (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+
+        redis.set('players', JSON.stringify(result));
+    });
+
+    redis.get('players', (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+        if (result) return res.status(200).json({
             success: true,
-            data: result
+            data: JSON.parse(result)
         });
     });
 };
 
 const getPlayer = async (req, res) => {
     const { id } = req.params;
+
     const query = `SELECT * FROM players WHERE player_id = '${id}'`;
-    await connectionDB.query(query, async (err, result) => {
+    await connectionDB.query(query, (err, result) => {
         if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
         if (result.length === 0) return res.status(400).json({ success: false, message: 'Player does not exist' });
-        return res.status(200).json({
+        redis.set('player', JSON.stringify(result));
+    });
+
+    redis.get('player', (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+        if (result) return res.status(200).json({
             success: true,
-            data: result
+            data: JSON.parse(result)
         });
     });
 };
@@ -90,10 +103,53 @@ const deletePlayer = async (req, res) => {
 
 };
 
+const findByQueryParams = async (req, res) => {
+    const { team, country, position } = req.query;
+
+    if (team) {
+        const teamQuery = `SELECT * FROM players INNER JOIN teams ON players.team_id=teams.team_id WHERE players.team_id='${team}';`;
+        await connectionDB.query(teamQuery, async (err, result) => {
+            if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+            if (result.length === 0) return res.status(400).json({ success: false, message: 'Team does not exist' });
+            return res.status(200).json({
+                success: true,
+                data: result
+            });
+        });
+    }
+
+    if (position) {
+        const positionQuery = `SELECT * FROM players WHERE position = '${position.toLowerCase()}'`;
+        await connectionDB.query(positionQuery, async (err, result) => {
+            if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+            if (result.length === 0) return res.status(400).json({ success: false, message: 'Position does not exist' });
+            return res.status(200).json({
+                success: true,
+                data: result
+            });
+        });
+    }
+
+    if (country) {
+        country.charAt(0).toUpperCase() + country.slice(1).toLowerCase();
+        const countryQuery = `SELECT *  FROM teams JOIN players ON teams.team_id = players.team_id where teams.country='${country}';`
+        await connectionDB.query(countryQuery, async (err, result) => {
+            if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+            if (result.length === 0) return res.status(400).json({ success: false, message: 'Country does not exist' });
+            return res.status(200).json({
+                success: true,
+                data: result
+            });
+        }
+        );
+    }
+};
+
 module.exports = {
     getPlayers,
     createPlayer,
     getPlayer,
     updatePlayer,
-    deletePlayer
+    deletePlayer,
+    findByQueryParams
 };

@@ -1,0 +1,21 @@
+/api/team/new:
+  post:
+    tags:
+      - Team
+    summary: Create a new team
+    description: Create a new team
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+    schema:
+      $ref: "#/components/schemas/Team"
+    responses:
+      201:
+        description: Team created
+      400:
+        description: Bad request
+      500:
+        description: Internal server error
