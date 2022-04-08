@@ -1,16 +1,42 @@
 const connectionDB = require('../database/dbConnection');
+//const client = require('../database/redis');
 
 const getTeams = async (req, res) => {
+
+    //await client.connect();
+
     const query = `SELECT * FROM teams`;
     await connectionDB.query(query, (err, result) => {
         if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
         if (result.length === 0) return res.status(400).json({ success: false, message: 'Teams does not exist' });
+
+        //client.set('teams', JSON.stringify(result));
         return res.status(200).json({
             success: true,
             message: 'Teams retrieved successfully',
             data: result
         });
     });
+
+    /* client.get('teams', async (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+        if (result) {
+            return res.status(200).json({
+                success: true,
+                message: 'Teams retrieved successfully',
+                data: JSON.parse(result)
+            });
+        } else {
+            const query = `SELECT * FROM teams`;
+            await connectionDB.query(query, (err, result) => {
+                if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+                if (result.length === 0) return res.status(400).json({ success: false, message: 'Teams does not exist' });
+
+                client.set('teams', JSON.stringify(result));
+            });
+        }
+    }); */
+
 };
 
 const getTeam = async (req, res) => {
@@ -19,6 +45,7 @@ const getTeam = async (req, res) => {
     await connectionDB.query(query, (err, result) => {
         if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
         if (result.length === 0) return res.status(400).json({ success: false, message: 'Team does not exist' });
+
         return res.status(200).json({
             success: true,
             message: 'Team retrieved successfully',
