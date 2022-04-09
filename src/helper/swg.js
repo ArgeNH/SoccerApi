@@ -1,6 +1,6 @@
 const path = require('path');
 
-const swg = {
+const swgOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
@@ -24,4 +24,4 @@ const swg = {
     apis: [`${path.join(__dirname, '../routes/*.js')}`]
 };
 
-module.exports = swg;
+module.exports = swgOptions;

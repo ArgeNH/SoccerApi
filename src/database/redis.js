@@ -6,12 +6,4 @@ const redis = new Redis({
     password: process.env.REDIS_PASSWORD
 });
 
-/*
-redis[s]://[[username][:password]@][host][:port][/db-number]
-createClient({
-    url: 'redis://alice:foobared@awesome.redis.server:6380'
-
-    dn7XM@AmzTGeg#R
-}); */
-
 module.exports = redis;

@@ -24,15 +24,17 @@ const createPlayer = async (req, res) => {
 }
 
 const getPlayers = async (req, res) => {
-
+    console.log('1');
     const query = `SELECT * FROM players`;
-    await connectionDB.query(query, (err, result) => {
-        if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
-
-        redis.set('players', JSON.stringify(result));
+    connectionDB.query(query, async (err, result) => {
+        if (err)
+            return res.status(500).json({ success: false, message: `Error checking: ${err}` });
+        console.log('2');
+        await redis.set('players', JSON.stringify(result));
     });
 
     redis.get('players', (err, result) => {
+        console.log('3');
         if (err) return res.status(500).json({ success: false, message: `Error checking: ${err}` });
         if (result) return res.status(200).json({
             success: true,
